@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/sturdy-pancake-react-character-sheet/static/css/main.61558aec.css",
-    "main.js": "/sturdy-pancake-react-character-sheet/static/js/main.031dc0c7.js",
-    "static/js/453.98bb53cb.chunk.js": "/sturdy-pancake-react-character-sheet/static/js/453.98bb53cb.chunk.js",
-    "index.html": "/sturdy-pancake-react-character-sheet/index.html",
-    "main.61558aec.css.map": "/sturdy-pancake-react-character-sheet/static/css/main.61558aec.css.map",
-    "main.031dc0c7.js.map": "/sturdy-pancake-react-character-sheet/static/js/main.031dc0c7.js.map",
-    "453.98bb53cb.chunk.js.map": "/sturdy-pancake-react-character-sheet/static/js/453.98bb53cb.chunk.js.map"
+    "main.css": "./static/css/main.61558aec.css",
+    "main.js": "./static/js/main.726bc324.js",
+    "static/js/453.98bb53cb.chunk.js": "./static/js/453.98bb53cb.chunk.js",
+    "index.html": "./index.html",
+    "main.61558aec.css.map": "./static/css/main.61558aec.css.map",
+    "main.726bc324.js.map": "./static/js/main.726bc324.js.map",
+    "453.98bb53cb.chunk.js.map": "./static/js/453.98bb53cb.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.61558aec.css",
-    "static/js/main.031dc0c7.js"
+    "static/js/main.726bc324.js"
   ]
 }
