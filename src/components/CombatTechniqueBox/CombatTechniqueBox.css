@@ -1,0 +1,32 @@
+.technique-section-box {
+  margin-top: 5px; /* Add some space above each technique */
+  border: 1px solid #eee; /* Add a subtle border to distinguish techniques */
+}
+
+.technique-section-box .section-box-content {
+  padding-top: 10px;
+  padding-bottom: 10px;
+  gap: 8px;
+}
+
+.technique-stats-container {
+  display: flex;
+  gap: 15px;
+  align-items: flex-end; /* Align along the bottom edge */
+  justify-content: space-around;
+  border-top: 1px solid #eee;
+  padding-top: 10px;
+}
+
+.traits-section {
+  margin-top: 10px;
+  border-top: 1px solid #eee;
+  padding-top: 10px;
+}
+
+.traits-label {
+  font-size: 1.2em;
+  color: #000;
+  margin-bottom: 10px;
+  font-weight: bold;
+}

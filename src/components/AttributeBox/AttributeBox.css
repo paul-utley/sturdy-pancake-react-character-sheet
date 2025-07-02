@@ -1,0 +1,54 @@
+.attribute-box .floating-header {
+  font-size: 1.3em;
+}
+
+.attribute-box {
+    flex: 1;
+    border-radius: 4px;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+}
+
+.attribute-value-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    padding: 15px;
+}
+
+.attribute-fraction {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.attribute-value,
+.attribute-max-input {
+    border: none;
+    outline: none;
+    font-size: 1.5em;
+    font-weight: bold;
+    text-align: center;
+    width: 40px;
+    background: transparent;
+    font-family: inherit;
+}
+
+.attribute-separator {
+    font-size: 1.5em;
+    font-weight: bold;
+    margin: 0 5px;
+}
+
+.attribute-max-input::placeholder {
+    font-size: 16px;
+    font-weight: normal;
+    color: #999;
+}
+
+.attribute-box:hover .header-control {
+    opacity: 1;
+}

@@ -1,0 +1,31 @@
+.action-buttons-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.action-buttons-left,
+.action-buttons-right {
+  display: flex;
+  gap: 10px;
+}
+
+.action-btn {
+  background: #000;
+  color: #fff;
+  border: none;
+  border-radius: 0;
+  padding: 8px 15px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.9em;
+  font-weight: bold;
+  text-align: center;
+  transition: background-color 0.2s;
+  clip-path: polygon(10px 0, calc(100% - 10px) 0, 100% 10px, 100% calc(100% - 10px), calc(100% - 10px) 100%, 10px 100%, 0 calc(100% - 10px), 0 10px);
+}
+
+.action-btn:hover {
+  background: #333;
+}

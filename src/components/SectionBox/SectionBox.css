@@ -1,0 +1,122 @@
+.section-box {
+    position: relative;
+    border: none;
+    background: #000; /* This is the border color */
+    clip-path: polygon(15px 0, calc(100% - 15px) 0, 100% 15px, 100% calc(100% - 15px), calc(100% - 15px) 100%, 15px 100%, 0 calc(100% - 15px), 0 15px);
+    padding: 0; /* Override default box padding */
+    display: flex;
+    flex-direction: column;
+}
+
+.section-box::before {
+    content: '';
+    position: absolute;
+    top: 2px; 
+    left: 2px; 
+    right: 2px; 
+    bottom: 2px;
+    background: #fff; /* This is the inner background */
+    clip-path: inherit;
+    z-index: 1; /* Place it above the parent's background */
+}
+
+.section-box h2 {
+    position: relative;
+    z-index: 2;
+    padding: 0 10px;
+    margin: 0;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #000;
+    color: #fff;
+    font-size: 1.3em;
+    border-radius: 0; /* Override other h2 styles */
+}
+
+.section-box-content {
+    position: relative;
+    z-index: 2;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    overflow: hidden;
+    transition: max-height 0.5s ease-in-out, padding 0.5s ease-in-out;
+    max-height: 2000px; /* Set a large max-height for open state */
+}
+
+.section-box.collapsed .section-box-content {
+    max-height: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+.section-header-input {
+    position: relative;
+    z-index: 2;
+    padding: 0 15px;
+    margin: 0;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #000;
+    color: #fff;
+    font-size: 1.3em;
+    font-weight: bold;
+    border: none;
+    width: 100%;
+    box-sizing: border-box;
+    font-family: inherit;
+    text-align: center;
+    outline: none;
+}
+
+.section-header-input::placeholder {
+    color: #aaa;
+}
+
+
+.section-header-bottom {
+    background-color: #000;
+    height: 15px; /* Match the chamfer size */
+    z-index: 2;
+}
+
+.section-header-cut {
+    background-color: #fff;
+    height: 100%;
+    clip-path: polygon(15px 0, calc(100% - 15px) 0, calc(100% - 2px) 100%, 2px 100%);
+}
+
+.section-collapse-btn, .section-remove-btn {
+    position: absolute;
+    top: 20px;
+    transform: translateY(-50%);
+    z-index: 3;
+    color: #fff;
+    cursor: pointer;
+    line-height: 1;
+    font-weight: bold;
+    transition: color 0.2s, transform 0.3s ease-in-out;
+}
+
+.section-collapse-btn {
+    left: 15px;
+    font-size: 1.2em;
+}
+
+.section-remove-btn {
+    right: 15px;
+    font-size: 1.6em;
+}
+
+.section-box.collapsed .section-collapse-btn {
+    transform: translateY(-50%) rotate(180deg);
+}
+
+.section-remove-btn:hover, .section-collapse-btn:hover {
+    color: #ff4d4d;
+}

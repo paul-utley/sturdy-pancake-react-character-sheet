@@ -1,0 +1,24 @@
+.inset-box {
+    position: relative; /* For the pseudo-element */
+    background: #000; /* This is the border color */
+    clip-path: polygon(10px 0, calc(100% - 10px) 0, 100% 10px, 100% calc(100% - 10px), calc(100% - 10px) 100%, 10px 100%, 0 calc(100% - 10px), 0 10px);
+}
+.inset-box::before {
+    content: '';
+    position: absolute;
+    top: 2px; /* Border thickness */
+    left: 2px;
+    right: 2px;
+    bottom: 2px;
+    background: #fff; /* This is the inner background */
+    clip-path: inherit;
+    z-index: 1; /* Place it above the parent's background */
+}
+
+.inset-box-content {
+    position: relative; /* To establish a stacking context */
+    z-index: 2; /* To place it above the ::before pseudo-element */
+    padding: 5px 10px;
+}
+
+

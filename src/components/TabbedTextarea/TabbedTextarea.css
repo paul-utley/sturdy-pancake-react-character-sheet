@@ -1,0 +1,52 @@
+.tabbed-textarea {
+    position: relative;
+}
+
+.label-sizer {
+    position: absolute;
+    top: -9999px;
+    left: -9999px;
+    visibility: hidden;
+    white-space: pre; /* Prevent wrapping */
+    font-family: inherit;
+    font-weight: bold;
+    font-size: 1em;
+    padding: 0 5px;
+}
+
+.tab-label {
+    position: absolute;
+    top: -11px;
+    left: 10px;
+    background: #fff;
+    color: #000;
+    padding: 0 5px;
+    font-weight: bold;
+    font-size: 1em;
+    z-index: 1;
+    border: none;
+    outline: none;
+    font-family: inherit;
+    max-width: calc(100% - 30px); /* Prevent overlapping the remove button */
+}
+
+.static-label {
+    line-height: 1.2; /* Adjust alignment */
+    padding-top: 1px;
+    padding-bottom: 1px;
+}
+
+.tab-textarea-input {
+    width: 100%;
+    padding: 15px;
+    border: 1px solid #000;
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 1rem;
+    resize: none;
+    box-sizing: border-box;
+    overflow: hidden;
+    outline: none;
+}
+
+

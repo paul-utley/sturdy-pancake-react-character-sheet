@@ -1,0 +1,21 @@
+.list-item-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding-bottom: 15px; /* Add padding to the bottom */
+}
+
+.add-btn-container {
+    text-align: center;
+}
+
+.add-btn {
+    background: #000;
+    color: #fff;
+    border: none;
+    padding: 8px 15px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 1em;
+    clip-path: polygon(10px 0, calc(100% - 10px) 0, 100% 10px, 100% calc(100% - 10px), calc(100% - 10px) 100%, 10px 100%, 0 calc(100% - 10px), 0 10px);
+}

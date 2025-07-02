@@ -1,0 +1,43 @@
+.zone-input-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.zone-input-label {
+  font-size: 0.9em;
+  color: #888;
+  margin-bottom: 4px;
+  font-weight: bold;
+  padding-left: 10px;
+}
+
+.zone-input-container {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 10px;
+  border-radius: 4px;
+}
+
+.zone-input {
+  width: 30px;
+  text-align: center;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-family: inherit;
+  font-size: 1em;
+  padding: 2px;
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+.zone-input::-webkit-outer-spin-button,
+.zone-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.zone-label {
+  font-weight: bold;
+}

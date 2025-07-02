@@ -1,0 +1,36 @@
+.labelled-input-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.labelled-input-container .floating-header {
+    margin-bottom: 0; /* Override default margin */
+    min-width: 70px;
+    text-align: center;
+}
+
+.labelled-input {
+    font-family: inherit;
+    font-size: 1.2em;
+    font-weight: bold;
+    padding: 5px;
+    border: 2px solid #000;
+    background: #fff;
+    width: 60px; /* Match the select box width */
+    text-align: center;
+    border-radius: 0; /* Sharp corners */
+}
+
+/* Hide number input spinners for a cleaner look */
+.labelled-input[type=number]::-webkit-inner-spin-button, 
+.labelled-input[type=number]::-webkit-outer-spin-button { 
+  -webkit-appearance: none; 
+  margin: 0; 
+}
+
+.labelled-input[type=number] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}

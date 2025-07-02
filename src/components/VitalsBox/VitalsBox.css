@@ -1,0 +1,56 @@
+.vitals-box {
+    border-radius: 4px;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+}
+
+.vitals-value-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 5px;
+}
+
+.vitals-fraction {
+    position: relative;
+    width: 55px;
+    height: 50px;
+    background: linear-gradient(to bottom right, transparent calc(50% - 1px), #000 50%, transparent calc(50% + 1px));
+}
+
+.vitals-value,
+.vitals-max-input {
+    position: absolute;
+    border: none;
+    outline: none;
+    font-size: 1.2em;
+    font-weight: bold;
+    width: 30px;
+    background: transparent;
+    font-family: inherit;
+    padding: 0;
+}
+
+.vitals-value {
+    top: 0;
+    left: 10px;
+    text-align: left;
+}
+
+.vitals-max-input {
+    bottom: 0;
+    right: 10px;
+    text-align: right;
+}
+
+.vitals-max-input::placeholder {
+    font-size: 14px;
+    font-weight: normal;
+    color: #999;
+}
+
+.vitals-box:hover .header-control {
+    opacity: 1;
+}

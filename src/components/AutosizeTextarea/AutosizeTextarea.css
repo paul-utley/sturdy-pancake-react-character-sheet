@@ -1,0 +1,12 @@
+.autosize-textarea {
+    width: 100%;
+    padding: 0;
+    border: none;
+    font-family: inherit;
+    font-size: 1rem;
+    resize: none; /* Disable manual resizing */
+    outline: none;
+    background: transparent;
+    box-sizing: border-box;
+    overflow-y: hidden; /* Hide the scrollbar */
+}

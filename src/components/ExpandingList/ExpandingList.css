@@ -1,0 +1,30 @@
+.expanding-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.expanding-list-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.expanding-list-item .list-bullet {
+  font-size: 1.2em;
+  color: #555;
+}
+
+.expanding-list-item input {
+  border: none;
+  outline: none;
+  background: transparent;
+  font-family: inherit;
+  font-size: 1em;
+  width: 100%;
+  padding: 4px 0;
+}
+
+.expanding-list-item input::placeholder {
+  color: #aaa;
+}

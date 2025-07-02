@@ -1,38 +1,204 @@
-.App {
-  text-align: center;
+.sheet {
+    max-width: 1300px;
+    margin: auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    position: relative;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
+.stat-grid {
+    display: flex;
+    justify-content: space-around;
+    gap: 15px;
+} 
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.main-content {
   display: flex;
-  flex-direction: column;
+  flex-wrap: wrap;
+  gap: 20px;
+  padding: 20px;
+  justify-content: center;
+}
+
+.ability-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-bottom: 10px;
+}
+
+.ability-button {
+  position: relative;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.9em;
+  font-weight: bold;
+  text-align: center;
+  transition: background-color 0.2s, color 0.2s;
+  clip-path: polygon(8px 0, calc(100% - 8px) 0, 100% 8px, 100% calc(100% - 8px), calc(100% - 8px) 100%, 8px 100%, 0 calc(100% - 8px), 0 8px);
+  display: flex;
   align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  padding: 8px 12px;
+  min-height: 38px;
 }
 
-.App-link {
-  color: #61dafb;
+.ability-button.active {
+  background: #000;
+  color: #fff;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+.ability-button.inactive {
+  background: #000; /* Border color */
+  color: #888; /* Lighter shade for inactive text */
+}
+
+.ability-button.inactive::before {
+  content: '';
+  position: absolute;
+  top: 2px; 
+  left: 2px; 
+  right: 2px; 
+  bottom: 2px;
+  background: #fff; /* Inner background */
+  clip-path: inherit;
+  z-index: 1;
+}
+
+.ability-button span {
+  position: relative;
+  z-index: 2;
+}
+
+.column {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex: 1;
+    min-width: 0; /* Prevents flex items from overflowing their container */
+}
+
+.sub-column-container {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+}
+
+.sub-column {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex: 1;
+    min-width: 0;
+}
+
+.skills-sub-column {
+    flex: 0.8; /* Make skills column narrower */
+}
+
+.skills-list {
+    display: flex;
+    flex-direction: column;
+    gap: 5px; /* Tighter spacing for list items */
+}
+
+.vitals-box-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0px; /* Tighter spacing for vitals */
+}
+
+.vitals-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5px;
+}
+
+.secondary-stats-container {
+  display: flex;
+  gap: 10px;
+  align-items: stretch; /* Make children same height */
+}
+
+.armor-box {
+    background: #fff;
+    border-radius: 4px;
+    overflow: hidden; /* Ensures the textarea respects the border-radius */
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.armor-select {
+    border: none;
+    padding: 8px 10px;
+    background: transparent;
+    width: 100%;
+    box-sizing: border-box;
+    outline: none;
+    font-family: inherit;
+    font-size: 1em;
+    cursor: pointer;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    text-align: center;
+    flex-grow: 1;
+}
+
+.add-technique-btn {
+  background: #000;
+  color: #fff;
+  border: none;
+  border-radius: 0;
+  padding: 10px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 1em;
+  font-weight: bold;
+  text-align: center;
+  transition: background-color 0.2s;
+  margin-top: 5px;
+  clip-path: polygon(10px 0, calc(100% - 10px) 0, 100% 10px, 100% calc(100% - 10px), calc(100% - 10px) 100%, 10px 100%, 0 calc(100% - 10px), 0 10px);
+  width: fit-content;
+  align-self: center;
+}
+
+@keyframes flash-animation {
+  0% {
+    background-color: transparent;
   }
-  to {
-    transform: rotate(360deg);
+  25% {
+    background-color: #f0e68c; /* A soft yellow flash */
+  }
+  100% {
+    background-color: transparent;
+  }
+}
+
+.highlight-flash {
+  animation: flash-animation 1.5s ease-out;
+}
+
+.add-technique-btn:hover {
+  background: #333;
+}
+
+/* --- Responsive Design --- */
+@media screen and (max-width: 1299px) {
+  .main-content {
+    flex-wrap: wrap;
+  }
+
+  .column {
+    /* Two columns on medium screens */
+    flex-basis: calc(50% - 5px);
+  }
+
+  .column:last-child {
+    /* The third column takes full width on the next line */
+    flex-basis: 100%;
   }
 }
