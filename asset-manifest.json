@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/paul-utley.github.io/sturdy-pancake-react-character-sheet/static/css/main.61558aec.css",
-    "main.js": "/paul-utley.github.io/sturdy-pancake-react-character-sheet/static/js/main.88ee8d16.js",
-    "static/js/453.98bb53cb.chunk.js": "/paul-utley.github.io/sturdy-pancake-react-character-sheet/static/js/453.98bb53cb.chunk.js",
-    "index.html": "/paul-utley.github.io/sturdy-pancake-react-character-sheet/index.html",
-    "main.61558aec.css.map": "/paul-utley.github.io/sturdy-pancake-react-character-sheet/static/css/main.61558aec.css.map",
-    "main.88ee8d16.js.map": "/paul-utley.github.io/sturdy-pancake-react-character-sheet/static/js/main.88ee8d16.js.map",
-    "453.98bb53cb.chunk.js.map": "/paul-utley.github.io/sturdy-pancake-react-character-sheet/static/js/453.98bb53cb.chunk.js.map"
+    "main.css": "/sturdy-pancake-react-character-sheet/static/css/main.61558aec.css",
+    "main.js": "/sturdy-pancake-react-character-sheet/static/js/main.031dc0c7.js",
+    "static/js/453.98bb53cb.chunk.js": "/sturdy-pancake-react-character-sheet/static/js/453.98bb53cb.chunk.js",
+    "index.html": "/sturdy-pancake-react-character-sheet/index.html",
+    "main.61558aec.css.map": "/sturdy-pancake-react-character-sheet/static/css/main.61558aec.css.map",
+    "main.031dc0c7.js.map": "/sturdy-pancake-react-character-sheet/static/js/main.031dc0c7.js.map",
+    "453.98bb53cb.chunk.js.map": "/sturdy-pancake-react-character-sheet/static/js/453.98bb53cb.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.61558aec.css",
-    "static/js/main.88ee8d16.js"
+    "static/js/main.031dc0c7.js"
   ]
 }
