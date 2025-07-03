@@ -1,7 +1,7 @@
 import React, { useRef, useLayoutEffect } from 'react';
 import './TabbedTextarea.css';
 
-const TabbedTextarea = ({ item, onChange, isLabelEditable = true }) => {
+const TabbedTextarea = ({ item, onChange, onUse, isUsed, isLabelEditable = true }) => {
   const labelRef = useRef(null);
   const sizerRef = useRef(null);
   const textareaRef = useRef(null);
@@ -49,6 +49,15 @@ const TabbedTextarea = ({ item, onChange, isLabelEditable = true }) => {
         value={item.text}
         onChange={handleInputChange}
       />
+      {onUse && (
+        <button 
+          className={`use-ability-btn ${isUsed ? 'used' : ''}`}
+          onClick={() => onUse(item.id)}
+          disabled={isUsed}
+        >
+          {isUsed ? 'Used' : 'Use'}
+        </button>
+      )}
     </div>
   );
 };

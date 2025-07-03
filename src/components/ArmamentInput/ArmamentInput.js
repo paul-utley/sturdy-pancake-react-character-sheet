@@ -4,7 +4,7 @@ import './ArmamentInput.css';
 const ArmamentInput = ({ value, onChange }) => {
   return (
     <div className="armament-input-wrapper">
-      <div className="armament-input-label">Armament/Role</div>
+      <div className="armament-input-label">Armament</div>
       <select
         className="armament-input"
         value={value}

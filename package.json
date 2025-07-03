@@ -1,12 +1,14 @@
 {
   "name": "react-app",
   "version": "0.1.0",
-  "homepage": "paul-utley.github.io/sturdy-pancake-react-character-sheet",
+  "homepage": ".",
   "private": true,
   "dependencies": {
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.3.0",
+        "@dnd-kit/core": "^6.1.0",
+    "@dnd-kit/sortable": "^8.0.0",
     "@testing-library/user-event": "^13.5.0",
     "pako": "^2.1.0",
     "react": "^19.1.0",

@@ -4,7 +4,6 @@
     padding: 20px;
     display: flex;
     flex-direction: column;
-    gap: 15px;
     position: relative;
 }
 
@@ -180,10 +179,6 @@
 
 .highlight-flash {
   animation: flash-animation 1.5s ease-out;
-}
-
-.add-technique-btn:hover {
-  background: #333;
 }
 
 /* --- Responsive Design --- */

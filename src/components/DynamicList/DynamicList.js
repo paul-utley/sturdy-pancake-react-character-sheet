@@ -1,7 +1,7 @@
 import React from 'react';
 import './DynamicList.css';
 
-const DynamicList = ({ items, setItems, addButtonText, children, newItemTemplate }) => {
+const DynamicList = ({ items, setItems, addButtonText, children, newItemTemplate, onUseItem }) => {
 
   const handleAddItem = () => {
     const newItem = { 
@@ -25,7 +25,7 @@ const DynamicList = ({ items, setItems, addButtonText, children, newItemTemplate
     <>
       <div className="list-item-container">
         {items.map((item) => 
-          children(item, handleItemChange, handleRemoveItem)
+          children(item, handleItemChange, handleRemoveItem, onUseItem)
         )}
       </div>
       <div className="add-btn-container">

@@ -18,6 +18,12 @@
   padding-top: 10px;
 }
 
+.technique-selectors-container {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
 .traits-section {
   margin-top: 10px;
   border-top: 1px solid #eee;

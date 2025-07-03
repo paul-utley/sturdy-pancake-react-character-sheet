@@ -6,6 +6,7 @@ import TabbedTextarea from '../TabbedTextarea/TabbedTextarea';
 import DamageInput from '../DamageInput/DamageInput';
 import ZoneInput from '../ZoneInput/ZoneInput';
 import ArmamentInput from '../ArmamentInput/ArmamentInput';
+import RoleInput from '../RoleInput/RoleInput';
 import AutosizeTextarea from '../AutosizeTextarea/AutosizeTextarea';
 import './CombatTechniqueBox.css';
 
@@ -28,6 +29,10 @@ const CombatTechniqueBox = ({ technique, onChange, onRemove, isCollapsible }) =>
 
   const handleArmamentChange = (newArmament) => {
     onChange({ ...technique, armament: newArmament });
+  };
+
+  const handleRoleChange = (newRole) => {
+    onChange({ ...technique, role: newRole });
   };
 
   const handleTraitsChange = (newTraits) => {
@@ -60,10 +65,16 @@ const CombatTechniqueBox = ({ technique, onChange, onRemove, isCollapsible }) =>
           onChange={handleZoneChange}
         />
       </div>
-      <ArmamentInput
-        value={technique.armament}
-        onChange={handleArmamentChange}
-      />
+      <div className="technique-selectors-container">
+        <ArmamentInput
+          value={technique.armament}
+          onChange={handleArmamentChange}
+        />
+        <RoleInput
+          value={technique.role}
+          onChange={handleRoleChange}
+        />
+      </div>
       <div className="traits-section">
         <div className="traits-label">Traits</div>
         <DynamicList

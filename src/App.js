@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import useMediaQuery from './hooks/useMediaQuery';
 import usePersistentState from './hooks/usePersistentState';
 import './App.css';
@@ -16,6 +16,8 @@ import CombatTechniqueBox from './components/CombatTechniqueBox/CombatTechniqueB
 import ActionButtons from './components/ActionButtons/ActionButtons';
 import MomentumBox from './components/MomentumBox/MomentumBox';
 import ExportModal from './components/ExportModal/ExportModal';
+import PaymentChoiceModal from './components/PaymentChoiceModal/PaymentChoiceModal';
+import NumericInputBox from './components/NumericInputBox/NumericInputBox';
 
 const initialCharacterState = {
   characterName: '',
@@ -48,11 +50,11 @@ const initialCharacterState = {
   ],
   health: { name: 'Health', value: 0, max: '' },
   vigor: { name: 'Vigor', value: 0, max: '' },
-  dashes: { name: 'Dashes', value: 0, max: '' },
+  dashes: { name: 'Dashes', value: 0, max: '6' },
   armor: '',
-  damageReduction: { name: 'DR', value: 0, max: '' },
+  damageReduction: 0,
   inventory: [''],
-  combatTechniques: [{ id: 1, column: 0, title: '', body: '', damage: { d6: '', d4: '' }, zone: '', armament: '', traits: [{ id: 1, label: '', text: '' }] }],
+  combatTechniques: [{ id: 1, column: 0, title: '', body: '', damage: { d6: '', d4: '' }, zone: '', armament: '', role: '', traits: [{ id: 1, label: '', text: '' }] }],
   momentum: false,
 };
 
@@ -62,6 +64,7 @@ const newTechniqueTemplate = {
   damage: { d6: '', d4: '' }, 
   zone: '', 
   armament: '', 
+  role: '', 
   traits: [{ id: 1, label: '', text: '' }]
 };
 
@@ -71,6 +74,16 @@ function App() {
     const [isExportModalOpen, setExportModalOpen] = useState(false);
   const isMediumScreen = useMediaQuery('(max-width: 1299px)');
   const [inactiveAbilityButtons, setInactiveAbilityButtons] = useState([]);
+  const [paymentModalAbility, setPaymentModalAbility] = useState(null);
+
+  useEffect(() => {
+    if (typeof character.damageReduction === 'object' && character.damageReduction !== null) {
+      setCharacter(prev => ({
+        ...prev,
+        damageReduction: character.damageReduction.value || 0
+      }));
+    }
+  }, [character, setCharacter]);
 
   const handleDataUpdate = (newData) => {
     if (window.confirm('Are you sure you want to update the character with this new data? This cannot be undone.')) {
@@ -127,7 +140,7 @@ function App() {
     const fieldsToHighlight = [];
 
     setCharacter(prev => {
-      const vitalsToReset = ['health', 'vigor', 'dashes', 'damageReduction'];
+      const vitalsToReset = ['health', 'vigor', 'dashes'];
       const newVitals = {};
       vitalsToReset.forEach(key => {
         const vital = prev[key];
@@ -206,8 +219,35 @@ function App() {
     handleFieldChange('dashes', newDashes);
   };
 
-  const handleDRChange = (newDR) => {
-    handleFieldChange('damageReduction', newDR);
+  const handleDRChange = (newValue) => {
+    setCharacter(prev => ({ ...prev, damageReduction: newValue }));
+  };
+
+  const handleArmorChange = (newArmor) => {
+    let newDR = 0;
+    let newMaxDashes = 6;
+
+    if (newArmor === 'Light' || newArmor === 'Medium') {
+      newMaxDashes = 5;
+    } else if (newArmor === 'Heavy') {
+      newMaxDashes = 4;
+    }
+
+    if (newArmor === 'Medium') {
+      newDR = 1;
+    } else if (newArmor === 'Heavy') {
+      newDR = 2;
+    }
+
+    setCharacter(prev => {
+      const newDashesValue = newMaxDashes;
+      return {
+        ...prev,
+        armor: newArmor,
+        damageReduction: newDR,
+        dashes: { ...prev.dashes, max: String(newMaxDashes), value: newDashesValue }
+      };
+    });
   };
 
   const handleAddTechnique = (columnIndex) => {
@@ -237,15 +277,75 @@ function App() {
   };
 
   const handleAbilityButtonClick = (abilityId) => {
-    setInactiveAbilityButtons(prev =>
-      prev.includes(abilityId)
-        ? prev.filter(id => id !== abilityId)
-        : [...prev, abilityId]
-    );
+    const ability = character.abilities.find(a => a.id === abilityId);
+    if (!ability) return;
+
+    const costMatch = ability.label.match(/\{(.+?)\}/);
+    if (!costMatch) { // Abilities with no cost
+      setInactiveAbilityButtons(prev => [...prev, abilityId]);
+      return;
+    }
+
+    const costString = costMatch[1];
+    const upperCaseCostString = costString.toUpperCase();
+
+    if (upperCaseCostString === '1 MOMENTUM') {
+      // Handle Momentum cost directly
+      if (character.momentum) {
+        setCharacter(prev => ({ ...prev, momentum: false }));
+        setInactiveAbilityButtons(ib => [...ib, abilityId]);
+      }
+    } else {
+      const parts = costString.split(' ');
+      const cost = parseInt(parts[0], 10);
+      const resource = parts[1];
+
+      if (resource.toLowerCase() === 'shrouded') {
+        // Handle Shrouded cost directly
+        setCharacter(prev => {
+          const attributeIndex = prev.attributes.findIndex(attr => attr.name.toLowerCase() === 'shrouded');
+          if (attributeIndex !== -1 && prev.attributes[attributeIndex].value >= cost) {
+            const newAttributes = [...prev.attributes];
+            newAttributes[attributeIndex] = { ...newAttributes[attributeIndex], value: newAttributes[attributeIndex].value - cost };
+            setInactiveAbilityButtons(ib => [...ib, abilityId]);
+            return { ...prev, attributes: newAttributes };
+          }
+          return prev; // Not enough shrouded
+        });
+      } else {
+        // For other attribute costs, open the modal
+        setPaymentModalAbility(ability);
+      }
+    }
+  };
+
+  const handlePaymentConfirm = (ability, resource) => {
+    const costMatch = ability.label.match(/\{(.+?)\}/);
+    const cost = parseInt(costMatch[1].split(' ')[0], 10);
+
+    setCharacter(prev => {
+      const attributeIndex = prev.attributes.findIndex(attr => attr.name.toLowerCase() === resource.toLowerCase());
+      if (attributeIndex !== -1 && prev.attributes[attributeIndex].value >= cost) {
+        const newAttributes = [...prev.attributes];
+        newAttributes[attributeIndex] = { ...newAttributes[attributeIndex], value: newAttributes[attributeIndex].value - cost };
+        setInactiveAbilityButtons(ib => [...ib, ability.id]);
+        return { ...prev, attributes: newAttributes };
+      }
+      return prev;
+    });
+
+    setPaymentModalAbility(null);
   };
 
   const handleMomentumToggle = () => {
-    handleFieldChange('momentum', !character.momentum);
+    const newMomentumState = !character.momentum;
+    if (newMomentumState) { // If gaining momentum
+      const momentumAbilities = character.abilities
+        .filter(a => a.label.includes('{1 MOMENTUM}'))
+        .map(a => a.id);
+      setInactiveAbilityButtons(prev => prev.filter(id => !momentumAbilities.includes(id)));
+    }
+    handleFieldChange('momentum', newMomentumState);
   };
 
   return (
@@ -255,6 +355,14 @@ function App() {
           characterData={character} 
           onClose={() => setExportModalOpen(false)} 
           onUpdate={handleDataUpdate} 
+        />
+      }
+      {paymentModalAbility && 
+        <PaymentChoiceModal 
+          ability={paymentModalAbility} 
+          character={character} 
+          onClose={() => setPaymentModalAbility(null)} 
+          onConfirm={(resource) => handlePaymentConfirm(paymentModalAbility, resource)} 
         />
       }
       <ActionButtons onReset={handleReset} onNewRound={handleNewRound} onLongRest={handleLongRest} onExport={handleExport} />
@@ -274,30 +382,65 @@ function App() {
       <div className="main-content">
         <div className="column">
           <SectionBox title="Abilities" isCollapsible={true}>
-            <div className="ability-buttons">
-              {character.abilities
-                .filter(ability => ability.label && ability.label.includes('(1R)'))
-                .map(ability => (
-                  <div 
-                    key={ability.id} 
-                    className={`ability-button ${!inactiveAbilityButtons.includes(ability.id) ? 'active' : 'inactive'}`}
-                    onClick={() => handleAbilityButtonClick(ability.id)}
-                  >
-                    <span>{ability.label.split('(1R)')[0].trim()}</span>
-                  </div>
-              ))}
-            </div>
             <DynamicList 
-              items={character.abilities} 
-              setItems={handleAbilitiesChange} 
-              placeholder="New Ability"
+              items={[...character.abilities].sort((a, b) => {
+                const aIsPassive = a.label.includes('(PA)');
+                const bIsPassive = b.label.includes('(PA)');
+                if (aIsPassive && !bIsPassive) return 1;
+                if (!aIsPassive && bIsPassive) return -1;
+                return 0;
+              })}
+              setItems={handleAbilitiesChange}
               addButtonText="+ Ability"
-              isCollapsible={true}
-            >{(item, onChange, onRemove) => (
-                <DynamicListItem key={item.id} onRemove={() => onRemove(item.id)}>
-                  <TabbedTextarea item={item} onChange={onChange} />
-                </DynamicListItem>
-              )}
+              onUseItem={handleAbilityButtonClick}
+            >
+              {(ability, onAbilityChange, onAbilityRemove, onUseAbility) => {
+                const checkAffordability = (ability) => {
+                  const costMatch = ability.label.match(/\{(.+?)\}/);
+                  if (!costMatch) return true; // No cost is always affordable
+
+                  const costString = costMatch[1];
+                  let cost = 1;
+                  let resource = '';
+
+                  if (costString.toUpperCase() === 'M') {
+                    resource = 'Momentum';
+                  } else {
+                    const parts = costString.split(' ');
+                    cost = parseInt(parts[0], 10);
+                    resource = parts[1];
+                  }
+
+                  if (resource === 'Momentum') {
+                    return character.momentum;
+                  } else {
+                    const primaryAttribute = character.attributes.find(attr => attr.name.toLowerCase() === resource.toLowerCase());
+                    const canAffordPrimary = primaryAttribute && primaryAttribute.value >= cost;
+
+                    if (resource.toLowerCase() === 'shrouded') {
+                      return canAffordPrimary;
+                    }
+
+                    const resolveAttribute = character.attributes.find(attr => attr.name === 'Resolve');
+                    const canAffordResolve = resolveAttribute && resolveAttribute.value >= cost;
+                    return canAffordPrimary || canAffordResolve;
+                  }
+                };
+
+                const isAffordable = checkAffordability(ability);
+                const isUsed = inactiveAbilityButtons.includes(ability.id) || !isAffordable;
+
+                return (
+                  <DynamicListItem key={ability.id} onRemove={() => onAbilityRemove(ability.id)}>
+                    <TabbedTextarea 
+                      item={ability} 
+                      onChange={onAbilityChange} 
+                      onUse={!ability.label.includes('(PA)') ? onUseAbility : undefined}
+                      isUsed={isUsed}
+                    />
+                  </DynamicListItem>
+                );
+              }}
             </DynamicList>
           </SectionBox>
           {[...character.combatTechniques.filter(t => t.column === 0), ...(isMediumScreen ? character.combatTechniques.filter(t => t.column === 2) : [])].map(technique => (
@@ -402,13 +545,10 @@ function App() {
                       onChange={handleDashesChange}
                       isHighlighted={highlightedFields.includes('Dashes')}
                   />
-                                                      <VitalsBox 
-                    name={character.damageReduction.name}
-                    value={character.damageReduction.value}
-                    max={character.damageReduction.max}
+                                                      <NumericInputBox 
+                    name="DR"
+                    value={character.damageReduction}
                     onChange={handleDRChange}
-                    canExceedMax={true}
-                    isHighlighted={highlightedFields.includes('DR')}
                   />
                 </div>
               </div>
@@ -418,7 +558,7 @@ function App() {
                   <select 
                     className="armor-select"
                     value={character.armor}
-                    onChange={(e) => handleFieldChange('armor', e.target.value)}
+                    onChange={(e) => handleArmorChange(e.target.value)}
                   >
                     <option value="">None</option>
                     <option value="Light">Light</option>
