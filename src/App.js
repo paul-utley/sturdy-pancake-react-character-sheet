@@ -131,6 +131,45 @@ function App() {
     }, 1500); // Match animation duration
   };
 
+  const handleQuickRest = () => {
+    setInactiveAbilityButtons([]);
+    setCharacter(prev => {
+      const dashesMax = parseInt(prev.dashes.max, 10);
+      const newDashes = { ...prev.dashes };
+      if (!isNaN(dashesMax)) {
+        newDashes.value = dashesMax;
+      }
+
+      const vigorMax = parseInt(prev.vigor.max, 10);
+      const newVigor = { ...prev.vigor };
+      if (!isNaN(vigorMax)) {
+        newVigor.value = vigorMax;
+      }
+
+      const newAttributes = prev.attributes.map(attr => {
+        if (attr.name === 'Resolve') {
+          const resolveMax = parseInt(attr.max, 10);
+          if (!isNaN(resolveMax)) {
+            return { ...attr, value: resolveMax };
+          }
+        }
+        return attr;
+      });
+
+      return {
+        ...prev,
+        dashes: newDashes,
+        vigor: newVigor,
+        attributes: newAttributes,
+      };
+    });
+
+    setHighlightedFields(['Vigor', 'Resolve', 'Dashes']);
+    setTimeout(() => {
+      setHighlightedFields([]);
+    }, 1500);
+  };
+
       const handleExport = () => {
     setExportModalOpen(true);
   };
@@ -349,7 +388,8 @@ function App() {
   };
 
   return (
-    <div className="sheet">
+    <>
+      <div className="sheet">
       {isExportModalOpen && 
         <ExportModal 
           characterData={character} 
@@ -365,10 +405,11 @@ function App() {
           onConfirm={(resource) => handlePaymentConfirm(paymentModalAbility, resource)} 
         />
       }
-      <ActionButtons onReset={handleReset} onNewRound={handleNewRound} onLongRest={handleLongRest} onExport={handleExport} />
+
       <div className="stat-grid">
-        {character.attributes.map((attr, index) => (
-                      <AttributeBox 
+        <div className="attributes-container">
+          {character.attributes.map((attr, index) => (
+            <AttributeBox 
               key={attr.name}
               name={attr.name}
               value={attr.value}
@@ -377,19 +418,21 @@ function App() {
               canExceedMax={attr.name === 'Resolve'}
               isHighlighted={highlightedFields.includes(attr.name)}
             />
-        ))}
+          ))}
+        </div>
+        <div className="stat-action-buttons">
+          <div className="stat-button-row">
+            <button className="action-btn icon-btn" onClick={handleQuickRest} title="Quick Rest"><img src="/break.png" alt="New Round" /></button>
+            <button className="action-btn icon-btn" onClick={handleLongRest} title="Long Rest"><img src="/rest.png" alt="Long Rest" /></button>
+          </div>
+          <button className="action-btn icon-btn" onClick={handleNewRound} title="New Round"><img src="/reset.png" alt="New Round" /></button>
+        </div>
       </div>
       <div className="main-content">
         <div className="column">
           <SectionBox title="Abilities" isCollapsible={true}>
             <DynamicList 
-              items={[...character.abilities].sort((a, b) => {
-                const aIsPassive = a.label.includes('(PA)');
-                const bIsPassive = b.label.includes('(PA)');
-                if (aIsPassive && !bIsPassive) return 1;
-                if (!aIsPassive && bIsPassive) return -1;
-                return 0;
-              })}
+              items={character.abilities}
               setItems={handleAbilitiesChange}
               addButtonText="+ Ability"
               onUseItem={handleAbilityButtonClick}
@@ -592,6 +635,8 @@ function App() {
         </div>
       </div>
     </div>
+    <ActionButtons onReset={handleReset} onNewRound={handleNewRound} onLongRest={handleLongRest} onExport={handleExport} />
+    </>
   );
 }
 

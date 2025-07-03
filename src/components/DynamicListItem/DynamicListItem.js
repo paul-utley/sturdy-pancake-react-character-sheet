@@ -1,11 +1,10 @@
 import React from 'react';
 import './DynamicListItem.css';
 
-const DynamicListItem = ({ children, onRemove }) => {
+const DynamicListItem = ({ children, dragHandleListeners }) => {
   return (
     <div className="dynamic-list-item">
-      {children}
-      <button className="remove-item-btn" onClick={onRemove}>&times;</button>
+      {React.cloneElement(children, { dragHandleListeners })}
     </div>
   );
 };

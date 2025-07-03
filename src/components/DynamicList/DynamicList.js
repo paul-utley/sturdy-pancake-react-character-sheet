@@ -1,7 +1,28 @@
 import React from 'react';
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import SortableItem from '../SortableItem/SortableItem';
 import './DynamicList.css';
 
 const DynamicList = ({ items, setItems, addButtonText, children, newItemTemplate, onUseItem }) => {
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
 
   const handleAddItem = () => {
     const newItem = { 
@@ -21,17 +42,35 @@ const DynamicList = ({ items, setItems, addButtonText, children, newItemTemplate
     setItems(newItems);
   };
 
+  const handleDragEnd = (event) => {
+    const { active, over } = event;
+
+    if (active.id !== over.id) {
+      const oldIndex = items.findIndex((item) => item.id === active.id);
+      const newIndex = items.findIndex((item) => item.id === over.id);
+      setItems(arrayMove(items, oldIndex, newIndex));
+    }
+  };
+
   return (
-    <>
-      <div className="list-item-container">
-        {items.map((item) => 
-          children(item, handleItemChange, handleRemoveItem, onUseItem)
-        )}
-      </div>
+    <DndContext
+      sensors={sensors}
+      collisionDetection={closestCenter}
+      onDragEnd={handleDragEnd}
+    >
+      <SortableContext items={items} strategy={verticalListSortingStrategy}>
+        <div className="list-item-container">
+          {items.map((item) => (
+            <SortableItem key={item.id} id={item.id}>
+              {children(item, handleItemChange, handleRemoveItem, onUseItem)}
+            </SortableItem>
+          ))}
+        </div>
+      </SortableContext>
       <div className="add-btn-container">
         <button className="add-btn" onClick={handleAddItem}>{addButtonText}</button>
       </div>
-    </>
+    </DndContext>
   );
 };
 

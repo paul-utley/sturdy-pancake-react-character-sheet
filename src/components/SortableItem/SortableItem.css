@@ -1,0 +1,8 @@
+.sortable-item {
+  touch-action: none; /* Prevent scrolling on touch devices when dragging */
+  position: relative;
+}
+
+.sortable-item:focus-visible {
+    outline: none;
+}

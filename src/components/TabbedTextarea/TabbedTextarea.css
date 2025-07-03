@@ -6,6 +6,24 @@
   margin-bottom: 10px;
 }
 
+.drag-handle {
+  position: absolute;
+  bottom: 5px;
+  left: 50%;
+  transform: translateX(-50%);
+  cursor: grab;
+  color: #aaa;
+  font-size: 1.2em;
+  opacity: 0;
+  transition: opacity 0.2s;
+  z-index: 2;
+  line-height: 1;
+}
+
+.tabbed-textarea:hover .drag-handle {
+  opacity: 1;
+}
+
 .label-sizer {
   position: absolute;
   top: -9999px;
@@ -51,7 +69,7 @@
   overflow: hidden;
   outline: none;
   font-family: inherit;
-  font-size: 1rem;
+  font-size: .8rem;
   box-sizing: border-box;
 }
 

@@ -1,7 +1,7 @@
 import React, { useRef, useLayoutEffect } from 'react';
 import './TabbedTextarea.css';
 
-const TabbedTextarea = ({ item, onChange, onUse, isUsed, isLabelEditable = true }) => {
+const TabbedTextarea = ({ item, onChange, onUse, onRemove, isUsed, isLabelEditable = true, dragHandleListeners }) => {
   const labelRef = useRef(null);
   const sizerRef = useRef(null);
   const textareaRef = useRef(null);
@@ -27,6 +27,7 @@ const TabbedTextarea = ({ item, onChange, onUse, isUsed, isLabelEditable = true 
 
   return (
     <div className="tabbed-textarea">
+      <div className="drag-handle" {...dragHandleListeners}>☰</div>
       <span ref={sizerRef} className="label-sizer">{item.label || 'Label'}</span>
       {isLabelEditable ? (
         <input
