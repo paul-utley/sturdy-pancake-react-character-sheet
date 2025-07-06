@@ -1,7 +1,7 @@
 import React from 'react';
 import './LoadCharacterModal.css';
 
-const CharacterModal = ({ isOpen, canClose = true, onClose, characters, onLoad, onDelete, onNewCharacter, onOpenDataModal, onImport }) => {
+const CharacterModal = ({ isOpen, canClose = true, onClose, characters, onLoad, onDelete, onNewCharacter, onImport }) => {
   const handleDownload = (character) => {
     const dataStr = JSON.stringify(character, null, 2);
     const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
@@ -39,17 +39,15 @@ const CharacterModal = ({ isOpen, canClose = true, onClose, characters, onLoad, 
                 <li key={char.id} className="character-item" onClick={() => onLoad(char.id)}>
                   <span className="character-name">{char.characterName || 'Unnamed Character'}</span>
                   <div className="character-actions">
-                    <button onClick={(e) => { e.stopPropagation(); onOpenDataModal(char.id); }} className="char-btn export-btn" title="Edit Raw Data"><img src="data.png" alt="View Raw Data" /></button>
                     <button onClick={(e) => { e.stopPropagation(); handleDownload(char); }} className="char-btn download-btn" title="Download Character"><img src="download.png" alt="Download Character" /></button>
                     <button onClick={(e) => { e.stopPropagation(); onDelete(char.id); }} className="char-btn delete-btn" title="Delete Character"><img src="delete.png" alt="Delete Character" /></button>
-                    
                   </div>
                 </li>
               ))}
             </ul>
           )}
           <div className='char-modal-actions'>
-            <button onClick={onImport} className="new-char-btn" title="Import Character"><img src='import.png' alt="Import Character" /></button>
+            <button onClick={onImport} className="new-char-btn" title="Import Character"><img src='export.png' alt="Import Character" /></button>
             <button onClick={onNewCharacter} className="new-char-btn" title="New Character"><img src='add.png' alt="New Character" /></button>
           </div>
         </div>

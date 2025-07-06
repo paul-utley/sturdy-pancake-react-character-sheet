@@ -275,12 +275,6 @@ function App() {
     }, 1500);
   };
 
-      const openDataModal = (characterId) => {
-        setActiveCharacterId(characterId);
-        setCharacterModalOpen(false);
-    setDataModalOpen(true);
-  };
-
   const handleImport = () => {
     setImportModalOpen(true);
   };
@@ -580,10 +574,8 @@ function App() {
     let cost = 1;
     let resource = '';
 
-    if (costString.toUpperCase() === 'M') {
-      resource = 'Momentum';
-    } else {
-      const parts = costString.split(' ');
+    {
+      const parts = costString.trim().split(' ');
       cost = parseInt(parts[0], 10);
       resource = parts[1];
     }
@@ -861,7 +853,6 @@ function App() {
       onLoad={handleLoadCharacter}
       onDelete={handleDeleteCharacter}
       onNewCharacter={handleReset}
-      onOpenDataModal={openDataModal}
       onImport={handleImport}
     />
     <ImportCharacterModal 

@@ -14,7 +14,7 @@ import './CombatTechniqueBox.css';
 
 const extractCostFromLabel = (label) => {
     if (!label) return 0;
-    const match = label.match(/{(\d+)\s*TP}/);
+    const match = label.trim().match(/{\s*(\d+)\s*TP\s*}/);
     return match ? parseInt(match[1], 10) : 0;
 };
 

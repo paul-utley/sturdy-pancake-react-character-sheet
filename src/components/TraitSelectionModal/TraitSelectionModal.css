@@ -42,10 +42,6 @@
   cursor: pointer;
 }
 
-.modal-body {
-  overflow-y: auto;
-}
-
 .trait-list {
   list-style: none;
   padding: 0;

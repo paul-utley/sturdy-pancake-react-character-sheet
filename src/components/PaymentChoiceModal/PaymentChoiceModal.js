@@ -6,7 +6,7 @@ const PaymentChoiceModal = ({ ability, character, onClose, onConfirm }) => {
 
   const costMatch = ability.label.match(/\{(.+?)\}/);
   const costString = costMatch ? costMatch[1] : '';
-  const parts = costString.split(' ');
+  const parts = costString.trim().split(' ');
   const cost = parseInt(parts[0], 10);
   const resource = parts[1];
 
