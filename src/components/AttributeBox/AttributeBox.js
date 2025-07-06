@@ -2,15 +2,15 @@ import React from 'react';
 import FloatingHeader from '../FloatingHeader/FloatingHeader';
 import './AttributeBox.css';
 
-const AttributeBox = ({ name, value, max, onChange, canExceedMax = false, isHighlighted = false }) => {
+const AttributeBox = ({ name, value, max, onChange, canExceedMax = false, isHighlighted = false, isLocked = false }) => {
 
-    const increment = () => {
+        const increment = () => {
     if (canExceedMax || max === '' || value < parseInt(max, 10)) {
       onChange({ name, value: value + 1, max });
     }
   };
 
-  const decrement = () => {
+    const decrement = () => {
     if (value > 0) {
       onChange({ name, value: value - 1, max });
     }
@@ -40,6 +40,7 @@ const AttributeBox = ({ name, value, max, onChange, canExceedMax = false, isHigh
             placeholder="Max"
             value={max}
             onChange={handleMaxChange}
+            disabled={isLocked}
           />
         </div>
       </div>

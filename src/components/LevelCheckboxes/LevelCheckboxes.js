@@ -1,7 +1,7 @@
 import React from 'react';
 import './LevelCheckboxes.css';
 
-const LevelCheckboxes = ({ level, onChange }) => {
+const LevelCheckboxes = ({ level, onChange, isLocked = false }) => {
   return (
     <div className="level-checkbox-group">
       {[1, 2, 3].map((boxLevel) => (
@@ -10,6 +10,7 @@ const LevelCheckboxes = ({ level, onChange }) => {
           type="checkbox"
           checked={level >= boxLevel}
           onChange={() => onChange(boxLevel)}
+          disabled={isLocked}
           className="level-checkbox"
         />
       ))}

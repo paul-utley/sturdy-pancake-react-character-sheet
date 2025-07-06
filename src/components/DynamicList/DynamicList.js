@@ -16,21 +16,13 @@ import {
 import SortableItem from '../SortableItem/SortableItem';
 import './DynamicList.css';
 
-const DynamicList = ({ items, setItems, addButtonText, children, newItemTemplate, onUseItem }) => {
+const DynamicList = ({ items, setItems, children }) => {
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     })
   );
-
-  const handleAddItem = () => {
-    const newItem = { 
-      id: Date.now(), 
-      ...(newItemTemplate || { label: '', text: '' }) 
-    };
-    setItems([...items, newItem]);
-  };
 
   const handleRemoveItem = (id) => {
     const newItems = items.filter((item) => item.id !== id);
@@ -62,14 +54,11 @@ const DynamicList = ({ items, setItems, addButtonText, children, newItemTemplate
         <div className="list-item-container">
           {items.map((item) => (
             <SortableItem key={item.id} id={item.id}>
-              {children(item, handleItemChange, handleRemoveItem, onUseItem)}
+              {children(item, handleItemChange, handleRemoveItem)}
             </SortableItem>
           ))}
         </div>
       </SortableContext>
-      <div className="add-btn-container">
-        <button className="add-btn" onClick={handleAddItem}>{addButtonText}</button>
-      </div>
     </DndContext>
   );
 };

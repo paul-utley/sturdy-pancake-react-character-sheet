@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './SectionBox.css';
 
-const SectionBox = ({ title, children, isHeaderEditable, onTitleChange, placeholder, onRemove, className, isCollapsible = false }) => {
+const SectionBox = ({ title, children, isHeaderEditable, onTitleChange, placeholder, onRemove, className, isCollapsible = false, totalCost }) => {
   const [isCollapsed, setIsCollapsed] = useState(isCollapsible ? false : true);
   return (
     <div className={`section-box ${className || ''} ${isCollapsible && isCollapsed ? 'collapsed' : ''}`}>
@@ -11,6 +11,11 @@ const SectionBox = ({ title, children, isHeaderEditable, onTitleChange, placehol
         </div>
       }
       {onRemove && <div className="section-remove-btn" onClick={onRemove}>×</div>}
+      {typeof totalCost === 'number' && (
+        <div className="section-total-cost">
+          {totalCost} TP
+        </div>
+      )}
       {isHeaderEditable ? (
         <input
           type="text"

@@ -3,7 +3,7 @@ import InsetBox from '../InsetBox/InsetBox';
 import LevelCheckboxes from '../LevelCheckboxes/LevelCheckboxes';
 import './SkillItem.css';
 
-const SkillItem = ({ name, level, onChange, isEditable = false }) => {
+const SkillItem = ({ name, level, onChange, isEditable = false, isLocked = false }) => {
   const handleNameChange = (e) => {
     // Save on blur
     onChange({ name: e.currentTarget.textContent, level });
@@ -19,7 +19,7 @@ const SkillItem = ({ name, level, onChange, isEditable = false }) => {
         {isEditable ? (
           <span 
             className="skill-name"
-            contentEditable={true}
+            contentEditable={!isLocked}
             suppressContentEditableWarning={true} // React warning for uncontrolled component
             onBlur={handleNameChange}
           >
@@ -29,7 +29,7 @@ const SkillItem = ({ name, level, onChange, isEditable = false }) => {
           <span className="skill-name">{name}</span>
         )}
       </InsetBox>
-      <LevelCheckboxes level={level} onChange={handleLevelChange} />
+      <LevelCheckboxes level={level} onChange={handleLevelChange} isLocked={isLocked} />
     </div>
   );
 };

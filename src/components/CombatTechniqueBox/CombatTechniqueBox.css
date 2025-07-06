@@ -13,15 +13,29 @@
   display: flex;
   gap: 15px;
   align-items: flex-end; /* Align along the bottom edge */
-  justify-content: space-around;
+  justify-content: flex-start;
   border-top: 1px solid #eee;
   padding-top: 10px;
 }
 
 .technique-selectors-container {
   display: flex;
+  justify-content: flex-start;
   gap: 10px;
   margin-bottom: 10px;
+}
+
+.technique-range-container {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  justify-content: flex-start;
+  margin-bottom: 10px;
+  border-top: 1px solid #eee;
+}
+
+.increment-input-container {
+  flex-grow: 1;
 }
 
 .traits-section {

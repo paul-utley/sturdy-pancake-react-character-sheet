@@ -1,0 +1,28 @@
+/* Inherit base modal styles from App.css */
+
+.import-modal-content {
+    width: 500px;
+    max-width: 90%;
+}
+
+.import-textarea {
+    width: 100%;
+    min-height: 200px;
+    margin-top: 15px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.9em;
+    resize: vertical;
+    box-sizing: border-box; /* Ensures padding doesn't add to width */
+}
+
+.import-btn {
+    background-color: #4CAF50; /* Green */
+    color: white;
+}
+
+.import-btn:hover {
+    background-color: #45a049;
+}

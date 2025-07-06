@@ -1,7 +1,7 @@
 import React, { useRef, useLayoutEffect } from 'react';
 import './TabbedTextarea.css';
 
-const TabbedTextarea = ({ item, onChange, onUse, onRemove, isUsed, isLabelEditable = true, dragHandleListeners }) => {
+const TabbedTextarea = ({ item, onChange, onUse, onRemove, isUsed, isLabelEditable = true, dragHandleListeners, isLocked = false }) => {
   const labelRef = useRef(null);
   const sizerRef = useRef(null);
   const textareaRef = useRef(null);
@@ -38,6 +38,7 @@ const TabbedTextarea = ({ item, onChange, onUse, onRemove, isUsed, isLabelEditab
           placeholder="Label"
           value={item.label}
           onChange={handleInputChange}
+          disabled={isLocked}
         />
       ) : (
         <span ref={labelRef} className="tab-label static-label">{item.label}</span>
@@ -49,6 +50,7 @@ const TabbedTextarea = ({ item, onChange, onUse, onRemove, isUsed, isLabelEditab
         placeholder="Description..."
         value={item.text}
         onChange={handleInputChange}
+        disabled={isLocked}
       />
       {onUse && (
         <button 

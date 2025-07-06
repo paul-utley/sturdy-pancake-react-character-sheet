@@ -1,0 +1,45 @@
+.attribute-input-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.attribute-input-label {
+  font-size: 0.9em;
+  color: #888; /* Medium grey */
+  margin-bottom: 4px;
+  font-weight: bold;
+}
+
+.attribute-input-container {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 0px;
+  border-radius: 4px;
+}
+
+.attribute-select {
+  flex-grow: 1;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-family: inherit;
+  font-size: 1em;
+  padding: 4px;
+  background-color: white;
+  cursor: pointer;
+  width: 100%;
+}
+
+.attribute-units {
+  font-size: 1em;
+  color: #888; /* Medium grey */
+  margin-left: 5px;
+  font-weight: bold;
+}
+
+.attribute-cost-display {
+  font-weight: normal;
+  color: #555;
+  margin-left: 8px;
+}

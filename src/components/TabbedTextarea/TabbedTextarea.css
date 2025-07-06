@@ -120,3 +120,8 @@
   background-color: #888;
   cursor: not-allowed;
 }
+
+.tab-label:disabled,
+.tab-textarea-input:disabled {
+  color: #000;
+}

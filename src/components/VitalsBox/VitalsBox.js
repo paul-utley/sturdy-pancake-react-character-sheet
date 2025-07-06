@@ -1,10 +1,15 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import FloatingHeader from '../FloatingHeader/FloatingHeader';
 import './VitalsBox.css';
 
-const VitalsBox = ({ name, value, max, onChange, canExceedMax = false, isHighlighted = false }) => {
+const VitalsBox = ({ name, value, max, onChange, canExceedMax = false, isHighlighted = false, isLocked = false }) => {
+  const [displayMax, setDisplayMax] = useState(max);
 
-    const increment = () => {
+  useEffect(() => {
+    setDisplayMax(max);
+  }, [max]);
+
+  const increment = () => {
     if (canExceedMax || max === '' || value < parseInt(max, 10)) {
       onChange({ name, value: value + 1, max });
     }
@@ -17,7 +22,13 @@ const VitalsBox = ({ name, value, max, onChange, canExceedMax = false, isHighlig
   };
 
   const handleMaxChange = (e) => {
-    onChange({ name, value, max: e.target.value });
+    setDisplayMax(e.target.value);
+  };
+
+  const handleMaxBlur = () => {
+    if (displayMax !== max) {
+      onChange({ name, value, max: displayMax });
+    }
   };
 
   return (
@@ -34,8 +45,10 @@ const VitalsBox = ({ name, value, max, onChange, canExceedMax = false, isHighlig
             type="text"
             className="vitals-max-input"
             placeholder="Max"
-            value={max}
+            value={displayMax}
             onChange={handleMaxChange}
+            onBlur={handleMaxBlur}
+            disabled={isLocked}
           />
         </div>
       </div>

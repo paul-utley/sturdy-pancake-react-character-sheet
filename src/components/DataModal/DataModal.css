@@ -1,0 +1,80 @@
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: #fff;
+  padding: 20px 30px;
+  border-radius: 0;
+  max-width: 80%;
+  width: 700px;
+  max-height: 80%;
+  overflow-y: auto;
+  position: relative;
+  border: 2px solid #000;
+  box-shadow: 5px 5px 0px 0px rgba(0,0,0,1);
+}
+
+.modal-close-btn {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  background: none;
+  border: none;
+  font-size: 2em;
+  font-weight: bold;
+  cursor: pointer;
+  line-height: 1;
+  color: #000;
+}
+
+textarea.json-display {
+  background-color: #f4f4f4;
+  border: 1px solid #ddd;
+  padding: 15px;
+  text-align: left;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  height: 50vh; /* Use height instead of max-height for textarea */
+  width: 100%;
+  box-sizing: border-box;
+  resize: vertical;
+  font-family: monospace;
+  font-size: 0.9em;
+}
+
+.modal-update-btn {
+  background: #000;
+  color: #fff;
+  border: none;
+  border-radius: 0;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 1em;
+  font-weight: bold;
+  text-align: center;
+  transition: background-color 0.2s;
+  clip-path: polygon(10px 0, calc(100% - 10px) 0, 100% 10px, 100% calc(100% - 10px), calc(100% - 10px) 100%, 10px 100%, 0 calc(100% - 10px), 0 10px);
+  margin-top: 15px;
+  display: block;
+  width: 100%;
+}
+
+.modal-update-btn:hover {
+  background: #333;
+}
+
+h2 {
+  margin-top: 0;
+  text-align: center;
+}

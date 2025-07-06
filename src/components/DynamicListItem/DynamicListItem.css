@@ -2,11 +2,11 @@
     position: relative;
 }
 
-/* .dynamic-list-item .remove-item-btn {
+.dynamic-list-item .remove-item-btn {
     position: absolute;
-    top: 50%;
+    top: 0%;
     transform: translateY(-50%);
-    right: 7px;
+    right: -7px;
     background: transparent;
     color: #aaa;
     border: none;
@@ -21,7 +21,7 @@
     transition: opacity 0.2s;
     opacity: 0;
     z-index: 2;
-} */
+}
 
 .dynamic-list-item:hover .remove-item-btn {
     opacity: 1;

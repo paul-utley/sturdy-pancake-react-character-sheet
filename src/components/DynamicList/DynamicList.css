@@ -1,7 +1,7 @@
 .list-item-container {
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 5px;
     padding-bottom: 15px; /* Add padding to the bottom */
 }
 

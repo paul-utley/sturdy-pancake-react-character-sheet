@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import useMediaQuery from './hooks/useMediaQuery';
 import usePersistentState from './hooks/usePersistentState';
+import pako from 'pako';
 import './App.css';
 import AttributeBox from './components/AttributeBox/AttributeBox';
 import VitalsBox from './components/VitalsBox/VitalsBox';
@@ -15,9 +16,11 @@ import ExpandingList from './components/ExpandingList/ExpandingList';
 import CombatTechniqueBox from './components/CombatTechniqueBox/CombatTechniqueBox';
 import ActionButtons from './components/ActionButtons/ActionButtons';
 import MomentumBox from './components/MomentumBox/MomentumBox';
-import ExportModal from './components/ExportModal/ExportModal';
+import DataModal from './components/DataModal/DataModal';
 import PaymentChoiceModal from './components/PaymentChoiceModal/PaymentChoiceModal';
 import NumericInputBox from './components/NumericInputBox/NumericInputBox';
+import CharacterModal from './components/LoadCharacterModal/LoadCharacterModal';
+import ImportCharacterModal from './components/ImportCharacterModal/ImportCharacterModal';
 
 const initialCharacterState = {
   characterName: '',
@@ -31,7 +34,7 @@ const initialCharacterState = {
     { name: 'Deft', value: 0, max: '' },
     { name: 'Steadfast', value: 0, max: '' },
     { name: 'Shrouded', value: 0, max: '' },
-    { name: 'Resolve', value: 0, max: '' },
+    { name: 'Resolve', value: 2, max: '2' },
   ],
   abilities: [{ id: 1, label: '', text: '' }],
   skills: [
@@ -54,29 +57,64 @@ const initialCharacterState = {
   armor: '',
   damageReduction: 0,
   inventory: [''],
-  combatTechniques: [{ id: 1, column: 0, title: '', body: '', damage: { d6: '', d4: '' }, zone: '', armament: '', role: '', traits: [{ id: 1, label: '', text: '' }] }],
+  combatTechniques: [{ id: 1, column: 0, title: '', body: '', damage: '', zone: '', armament: '', role: '', range: '', traits: [{ id: 1, label: '', text: '' }], totalCost: 0 }],
   momentum: false,
 };
+
+const createNewCharacter = () => ({
+  ...initialCharacterState,
+  id: Date.now(),
+  abilities: [{ id: Date.now(), label: '', text: '' }],
+  combatTechniques: [{ ...newTechniqueTemplate, id: Date.now(), column: 0, traits: [{ id: Date.now(), label: '', text: '' }] }]
+});
 
 const newTechniqueTemplate = {
   title: '', 
   body: '', 
-  damage: { d6: '', d4: '' }, 
+  damage: '', 
   zone: '', 
   armament: '', 
   role: '', 
-  traits: [{ id: 1, label: '', text: '' }]
+  range: '',
+  traits: [{ id: 1, label: '', text: '' }],
+  totalCost: 0
 };
 
 function App() {
-      const [character, setCharacter] = usePersistentState('character', initialCharacterState);
-    const [highlightedFields, setHighlightedFields] = useState([]);
-    const [isExportModalOpen, setExportModalOpen] = useState(false);
+  const [characters, setCharacters] = usePersistentState('characters', {});
+  const [activeCharacterId, setActiveCharacterId] = usePersistentState('activeCharacterId', null);
+  const [isCharacterModalOpen, setCharacterModalOpen] = useState(false);
+
+  useEffect(() => {
+    if (Object.keys(characters).length === 0) {
+      const newChar = createNewCharacter();
+      setCharacters({ [newChar.id]: newChar });
+      setActiveCharacterId(newChar.id);
+    } else if (!activeCharacterId || !characters[activeCharacterId]) {
+      setActiveCharacterId(Object.keys(characters)[0]);
+    }
+  }, [characters, activeCharacterId, setCharacters, setActiveCharacterId]);
+
+  const character = activeCharacterId ? characters[activeCharacterId] : null;
+  const setCharacter = useCallback((updater) => {
+    if (!activeCharacterId) return;
+    setCharacters(prevChars => {
+      const oldChar = prevChars[activeCharacterId];
+      const newChar = typeof updater === 'function' ? updater(oldChar) : updater;
+      return { ...prevChars, [activeCharacterId]: { ...newChar, id: activeCharacterId } };
+    });
+  }, [activeCharacterId, setCharacters]);
+
+  const [highlightedFields, setHighlightedFields] = useState([]);
+  const [isDataModalOpen, setDataModalOpen] = useState(false); 
+  const [isImportModalOpen, setImportModalOpen] = useState(false);
   const isMediumScreen = useMediaQuery('(max-width: 1299px)');
   const [inactiveAbilityButtons, setInactiveAbilityButtons] = useState([]);
   const [paymentModalAbility, setPaymentModalAbility] = useState(null);
+  const [isLocked, setIsLocked] = useState(false);
 
   useEffect(() => {
+    if (!character) return;
     if (typeof character.damageReduction === 'object' && character.damageReduction !== null) {
       setCharacter(prev => ({
         ...prev,
@@ -85,21 +123,88 @@ function App() {
     }
   }, [character, setCharacter]);
 
-  const handleDataUpdate = (newData) => {
-    if (window.confirm('Are you sure you want to update the character with this new data? This cannot be undone.')) {
-      // Here, we can add more robust validation or merging logic if needed.
-      // For now, we'll just replace the state.
-      setCharacter(newData);
+  useEffect(() => {
+    if (!character) return;
+    const daringAttribute = character.attributes.find(attr => attr.name === 'Daring');
+    const daringMax = Number(daringAttribute?.max || 0);
+    const minVigorMax = 3 + daringMax;
+    const currentVigorMax = Number(character.vigor.max || 0);
+
+    if (currentVigorMax < minVigorMax) {
+      setCharacter(prev => ({
+        ...prev,
+        vigor: { ...prev.vigor, max: String(minVigorMax) }
+      }));
     }
-  };
+  }, [character, setCharacter]);
+
+  useEffect(() => {
+    if (!character) return;
+    const steadfastAttribute = character.attributes.find(attr => attr.name === 'Steadfast');
+    const steadfastMax = Number(steadfastAttribute?.max || 0);
+    const minHealthMax = 5 + steadfastMax;
+    const currentHealthMax = Number(character.health.max || 0);
+
+    if (currentHealthMax < minHealthMax) {
+      setCharacter(prev => ({
+        ...prev,
+        health: { ...prev.health, max: String(minHealthMax) }
+      }));
+    }
+
+    try {
+      const jsonString = JSON.stringify(character);
+      const compressed = pako.deflate(jsonString);
+      
+      let binaryString = '';
+      compressed.forEach((byte) => {
+        binaryString += String.fromCharCode(byte);
+      });
+      const serializedState = btoa(binaryString);
+
+      const url = new URL(window.location);
+      url.searchParams.set('character', serializedState);
+      window.history.replaceState({ path: url.href }, '', url.href);
+    } catch (error) {
+      console.error('Error updating URL with character data:', error);
+    }
+  }, [character, setCharacter]);
 
     const handleReset = () => {
-    if (window.confirm('Are you sure you want to start a new character? All current data will be lost.')) {
-      setCharacter(initialCharacterState);
+    if (window.confirm('Are you sure you want to create a new character?')) {
+      const newChar = createNewCharacter();
+      setCharacters(prev => ({ ...prev, [newChar.id]: newChar }));
+      setActiveCharacterId(newChar.id);
+      setHighlightedFields([]);
+      setInactiveAbilityButtons([]);
     }
   };
 
-      const handleNewRound = () => {
+  const handleLoadCharacter = (characterId) => {
+    setActiveCharacterId(characterId);
+    setCharacterModalOpen(false);
+    
+  };
+
+  const handleDeleteCharacter = (characterId) => {
+    if (Object.keys(characters).length <= 1) {
+      alert("You cannot delete the last character.");
+      return;
+    }
+
+    if (window.confirm('Are you sure you want to delete this character? This cannot be undone.')) {
+      const newChars = { ...characters };
+      delete newChars[characterId];
+      
+      if (characterId === activeCharacterId) {
+        const newActiveId = Object.keys(newChars)[0];
+        setActiveCharacterId(newActiveId);
+      }
+      setCharacters(newChars);
+    }
+  };
+
+  const handleNewRound = () => {
     setInactiveAbilityButtons([]);
     setCharacter(prev => {
       const dashesMax = parseInt(prev.dashes.max, 10);
@@ -170,8 +275,59 @@ function App() {
     }, 1500);
   };
 
-      const handleExport = () => {
-    setExportModalOpen(true);
+      const openDataModal = (characterId) => {
+        setActiveCharacterId(characterId);
+        setCharacterModalOpen(false);
+    setDataModalOpen(true);
+  };
+
+  const handleImport = () => {
+    setImportModalOpen(true);
+  };
+
+  const handleImportCharacter = (data) => {
+    let parsedCharacter = null;
+    try {
+        // Attempt 1: Try to parse as new, compressed format
+        try {
+            const binaryString = atob(data);
+            const uint8array = new Uint8Array(binaryString.length).map((_, i) => binaryString.charCodeAt(i));
+            const jsonString = pako.inflate(uint8array, { to: 'string' });
+            parsedCharacter = JSON.parse(jsonString);
+        } catch (e) {
+            // This can fail if the data is not compressed; we'll try plain JSON next.
+        }
+
+        // Attempt 2: If first attempt failed, try plain JSON
+        if (!parsedCharacter) {
+            parsedCharacter = JSON.parse(data);
+        }
+
+        // If the imported character has no ID, generate one
+        if (!parsedCharacter.id) {
+            parsedCharacter.id = Date.now();
+        }
+
+        if (parsedCharacter && parsedCharacter.id) {
+            // Ensure the imported character doesn't overwrite an existing one
+            // by giving it a new ID if a conflict exists.
+            const newId = characters[parsedCharacter.id] ? Date.now() : parsedCharacter.id;
+            const newCharacter = { ...parsedCharacter, id: newId };
+
+            setCharacters(prev => ({
+                ...prev,
+                [newId]: newCharacter
+            }));
+            setActiveCharacterId(newId);
+            setImportModalOpen(false);
+            alert(`Character "${newCharacter.characterName || 'Unnamed Character'}" imported successfully!`);
+        } else {
+            throw new Error("Invalid or missing character data/ID.");
+        }
+    } catch (error) {
+        console.error("Failed to import character:", error);
+        alert("Could not import character. The data may be corrupt or in an invalid format.");
+    }
   };
 
   const handleLongRest = () => {
@@ -231,6 +387,15 @@ function App() {
     setCharacter(prev => ({ ...prev, abilities: newAbilities }));
   };
 
+  const handleAddAbility = () => {
+    const newAbility = { 
+      id: Date.now(), 
+      label: '', 
+      text: '' 
+    };
+    handleAbilitiesChange([...character.abilities, newAbility]);
+  };
+
     const handleSkillChange = (index, updatedSkill) => {
     setCharacter(prev => {
       const newSkills = [...prev.skills];
@@ -247,10 +412,26 @@ function App() {
   };
 
   const handleHealthChange = (newHealth) => {
+    const steadfastAttribute = character.attributes.find(attr => attr.name === 'Steadfast');
+    const steadfastMax = Number(steadfastAttribute?.max || 0);
+    const minHealthMax = 5 + steadfastMax;
+
+    if (newHealth.max !== '' && Number(newHealth.max) < minHealthMax) {
+      newHealth.max = String(minHealthMax);
+    }
+
     handleFieldChange('health', newHealth);
   };
 
   const handleVigorChange = (newVigor) => {
+    const daringAttribute = character.attributes.find(attr => attr.name === 'Daring');
+    const daringMax = Number(daringAttribute?.max || 0);
+    const minVigorMax = 3 + daringMax;
+
+    if (newVigor.max !== '' && Number(newVigor.max) < minVigorMax) {
+      newVigor.max = String(minVigorMax);
+    }
+
     handleFieldChange('vigor', newVigor);
   };
 
@@ -387,14 +568,62 @@ function App() {
     handleFieldChange('momentum', newMomentumState);
   };
 
+  const handleLockToggle = () => {
+    setIsLocked(prev => !prev);
+  };
+
+  const checkAffordability = (ability) => {
+    const costMatch = ability.label.match(/\{(.+?)\}/);
+    if (!costMatch) return true; // No cost is always affordable
+
+    const costString = costMatch[1];
+    let cost = 1;
+    let resource = '';
+
+    if (costString.toUpperCase() === 'M') {
+      resource = 'Momentum';
+    } else {
+      const parts = costString.split(' ');
+      cost = parseInt(parts[0], 10);
+      resource = parts[1];
+    }
+
+    if (resource === 'Momentum') {
+      return character.momentum;
+    } else {
+      const primaryAttribute = character.attributes.find(attr => attr.name.toLowerCase() === resource.toLowerCase());
+      const canAffordPrimary = primaryAttribute && primaryAttribute.value >= cost;
+
+      if (resource.toLowerCase() === 'shrouded') {
+        return canAffordPrimary;
+      }
+
+      const resolveAttribute = character.attributes.find(attr => attr.name === 'Resolve');
+      const canAffordResolve = resolveAttribute && resolveAttribute.value >= cost;
+      return canAffordPrimary || canAffordResolve;
+    }
+  };
+
+  if (!activeCharacterId || !character) {
+    return (
+      <CharacterModal
+        isOpen={true}
+        canClose={false}
+        characters={characters}
+        onLoad={handleLoadCharacter}
+        onDelete={handleDeleteCharacter}
+        onNewCharacter={handleReset}
+      />
+    );
+  }
+
   return (
     <>
       <div className="sheet">
-      {isExportModalOpen && 
-        <ExportModal 
+      {isDataModalOpen && 
+        <DataModal 
           characterData={character} 
-          onClose={() => setExportModalOpen(false)} 
-          onUpdate={handleDataUpdate} 
+          onClose={() => setDataModalOpen(false)} 
         />
       }
       {paymentModalAbility && 
@@ -408,7 +637,7 @@ function App() {
 
       <div className="stat-grid">
         <div className="attributes-container">
-          {character.attributes.map((attr, index) => (
+          {(character.attributes || []).map((attr, index) => (
             <AttributeBox 
               key={attr.name}
               name={attr.name}
@@ -417,15 +646,21 @@ function App() {
               onChange={(updatedAttribute) => handleAttributeChange(index, updatedAttribute)}
               canExceedMax={attr.name === 'Resolve'}
               isHighlighted={highlightedFields.includes(attr.name)}
+              isLocked={isLocked}
             />
           ))}
         </div>
         <div className="stat-action-buttons">
           <div className="stat-button-row">
-            <button className="action-btn icon-btn" onClick={handleQuickRest} title="Quick Rest"><img src="/break.png" alt="New Round" /></button>
-            <button className="action-btn icon-btn" onClick={handleLongRest} title="Long Rest"><img src="/rest.png" alt="Long Rest" /></button>
+            <button className="action-btn icon-btn" onClick={handleQuickRest} title="Quick Rest"><img src="break.png" alt="Quick Rest" /></button>
+            <button className="action-btn icon-btn" onClick={handleLongRest} title="Long Rest"><img src="rest.png" alt="Long Rest" /></button>
           </div>
-          <button className="action-btn icon-btn" onClick={handleNewRound} title="New Round"><img src="/reset.png" alt="New Round" /></button>
+          <div className="stat-button-row">
+            <button className="action-btn icon-btn" onClick={handleNewRound} title="New Round"><img src="reset.png" alt="New Round" /></button>
+            <button className="action-btn icon-btn" onClick={handleLockToggle} title={isLocked ? 'Unlock Sheet' : 'Lock Sheet'}>
+              <img src={isLocked ? 'locked.png' : 'unlocked.png'} alt={isLocked ? 'Unlock Sheet' : 'Lock Sheet'} />
+            </button>
+          </div>
         </div>
       </div>
       <div className="main-content">
@@ -434,42 +669,8 @@ function App() {
             <DynamicList 
               items={character.abilities}
               setItems={handleAbilitiesChange}
-              addButtonText="+ Ability"
-              onUseItem={handleAbilityButtonClick}
             >
-              {(ability, onAbilityChange, onAbilityRemove, onUseAbility) => {
-                const checkAffordability = (ability) => {
-                  const costMatch = ability.label.match(/\{(.+?)\}/);
-                  if (!costMatch) return true; // No cost is always affordable
-
-                  const costString = costMatch[1];
-                  let cost = 1;
-                  let resource = '';
-
-                  if (costString.toUpperCase() === 'M') {
-                    resource = 'Momentum';
-                  } else {
-                    const parts = costString.split(' ');
-                    cost = parseInt(parts[0], 10);
-                    resource = parts[1];
-                  }
-
-                  if (resource === 'Momentum') {
-                    return character.momentum;
-                  } else {
-                    const primaryAttribute = character.attributes.find(attr => attr.name.toLowerCase() === resource.toLowerCase());
-                    const canAffordPrimary = primaryAttribute && primaryAttribute.value >= cost;
-
-                    if (resource.toLowerCase() === 'shrouded') {
-                      return canAffordPrimary;
-                    }
-
-                    const resolveAttribute = character.attributes.find(attr => attr.name === 'Resolve');
-                    const canAffordResolve = resolveAttribute && resolveAttribute.value >= cost;
-                    return canAffordPrimary || canAffordResolve;
-                  }
-                };
-
+              {(ability, onAbilityChange, onAbilityRemove) => {
                 const isAffordable = checkAffordability(ability);
                 const isUsed = inactiveAbilityButtons.includes(ability.id) || !isAffordable;
 
@@ -478,21 +679,28 @@ function App() {
                     <TabbedTextarea 
                       item={ability} 
                       onChange={onAbilityChange} 
-                      onUse={!ability.label.includes('(PA)') ? onUseAbility : undefined}
+                      onUse={!ability.label.includes('(PA)') ? () => handleAbilityButtonClick(ability.id) : undefined}
                       isUsed={isUsed}
+                      isLocked={isLocked}
                     />
                   </DynamicListItem>
                 );
               }}
             </DynamicList>
+            <div className="add-btn-container">
+              <button className="add-btn" onClick={handleAddAbility}>
+                + Ability
+              </button>
+            </div>
           </SectionBox>
-          {[...character.combatTechniques.filter(t => t.column === 0), ...(isMediumScreen ? character.combatTechniques.filter(t => t.column === 2) : [])].map(technique => (
+          {[...(character.combatTechniques || []).filter(t => t.column === 0), ...(isMediumScreen ? (character.combatTechniques || []).filter(t => t.column === 2) : [])].map(technique => (
             <CombatTechniqueBox
               key={technique.id}
               technique={technique}
               onChange={(updated) => handleTechniqueChange(technique.id, updated)}
               onRemove={() => handleRemoveTechnique(technique.id)}
               isCollapsible={true}
+              isLocked={isLocked}
             />
           ))}
           {!isMediumScreen && <button className="add-technique-btn" onClick={() => handleAddTechnique(0)}>+ Combat Technique</button>}
@@ -509,17 +717,20 @@ function App() {
             <TabbedTextarea 
               item={character.bio} 
               onChange={(id, updatedItem) => handleFieldChange('bio', updatedItem)} 
-              isLabelEditable={false} 
+              isLabelEditable={false}
+              isLocked={isLocked} 
             />
             <TabbedTextarea 
               item={character.beliefs} 
               onChange={(id, updatedItem) => handleFieldChange('beliefs', updatedItem)} 
-              isLabelEditable={false} 
+              isLabelEditable={false}
+              isLocked={isLocked} 
             />
             <TabbedTextarea 
               item={character.goals} 
               onChange={(id, updatedItem) => handleFieldChange('goals', updatedItem)} 
-              isLabelEditable={false} 
+              isLabelEditable={false}
+              isLocked={isLocked} 
             />
           </SectionBox>
           <SectionBox
@@ -535,13 +746,14 @@ function App() {
               onChange={(e) => handleFieldChange('archetypeBody', e.target.value)}
             />
           </SectionBox>
-          {character.combatTechniques.filter(t => t.column === 1).map(technique => (
+          {(character.combatTechniques || []).filter(t => t.column === 1).map(technique => (
             <CombatTechniqueBox
               key={technique.id}
               technique={technique}
               onChange={(updated) => handleTechniqueChange(technique.id, updated)}
               onRemove={() => handleRemoveTechnique(technique.id)}
               isCollapsible={true}
+              isLocked={isLocked}
             />
           ))}
           <button className="add-technique-btn" onClick={() => handleAddTechnique(1)}>+ Combat Technique</button>
@@ -551,13 +763,14 @@ function App() {
             <div className="sub-column skills-sub-column">
               <FloatingHeader title="Skills" />
               <div className="skills-list">
-                {character.skills.map((skill, index) => (
+                {(character.skills || []).map((skill, index) => (
                                   <SkillItem 
                   key={index}
                   name={skill.name}
                   level={skill.level}
                   isEditable={skill.isEditable}
                   onChange={(updatedSkill) => handleSkillChange(index, updatedSkill)}
+                  isLocked={isLocked}
                 />
                 ))}
               </div>
@@ -571,6 +784,7 @@ function App() {
                     max={character.health.max}
                     onChange={handleHealthChange}
                     isHighlighted={highlightedFields.includes('Health')}
+                    isLocked={isLocked}
                   />
                                     <VitalsBox 
                     name={character.vigor.name}
@@ -578,6 +792,7 @@ function App() {
                     max={character.vigor.max}
                     onChange={handleVigorChange}
                     isHighlighted={highlightedFields.includes('Vigor')}
+                    isLocked={isLocked}
                   />
                 </div>
                 <div className="vitals-row">
@@ -587,6 +802,7 @@ function App() {
                       max={character.dashes.max}
                       onChange={handleDashesChange}
                       isHighlighted={highlightedFields.includes('Dashes')}
+                      isLocked={isLocked}
                   />
                                                       <NumericInputBox 
                     name="DR"
@@ -622,20 +838,37 @@ function App() {
               </SectionBox>
             </div>
           </div>
-          {!isMediumScreen && character.combatTechniques.filter(t => t.column === 2).map(technique => (
+          {(character.combatTechniques || []).filter(t => t.column === 2).map(technique => (
             <CombatTechniqueBox
               key={technique.id}
               technique={technique}
               onChange={(updated) => handleTechniqueChange(technique.id, updated)}
               onRemove={() => handleRemoveTechnique(technique.id)}
               isCollapsible={true}
+              isLocked={isLocked}
             />
           ))}
           {!isMediumScreen && <button className="add-technique-btn" onClick={() => handleAddTechnique(2)}>+ Combat Technique</button>}
         </div>
       </div>
     </div>
-    <ActionButtons onReset={handleReset} onNewRound={handleNewRound} onLongRest={handleLongRest} onExport={handleExport} />
+    <ActionButtons onOpenCharactersModal={() => setCharacterModalOpen(true)} />
+    <CharacterModal
+      isOpen={isCharacterModalOpen}
+      canClose={true}
+      onClose={() => setCharacterModalOpen(false)}
+      characters={characters}
+      onLoad={handleLoadCharacter}
+      onDelete={handleDeleteCharacter}
+      onNewCharacter={handleReset}
+      onOpenDataModal={openDataModal}
+      onImport={handleImport}
+    />
+    <ImportCharacterModal 
+      isOpen={isImportModalOpen}
+      onClose={() => setImportModalOpen(false)}
+      onImport={handleImportCharacter}
+    />
     </>
   );
 }

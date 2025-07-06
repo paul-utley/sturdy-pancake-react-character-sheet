@@ -1,0 +1,140 @@
+.modal-body {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+}
+
+.character-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    max-height: 400px;
+    overflow-y: auto;
+    width: 100%;
+}
+
+.char-modal-actions {
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+}
+
+.character-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 15px;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.character-item:hover {
+    background-color: #f5f5f5;
+}
+
+.character-item:last-child {
+    border-bottom: none;
+}
+
+.character-name {
+    font-weight: bold;
+    font-size: 1.1em;
+}
+
+.character-actions {
+    display: flex;
+    align-items: center;
+}
+
+.character-actions button {
+    margin-left: 10px;
+    padding: 6px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.character-actions .char-btn {
+
+    border: none;
+    width: 32px;
+    height: 32px;
+    padding: 5px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.2s;
+    opacity: 0.7;
+}
+
+.character-actions .char-btn img {
+    width: 100%;
+    height: auto;
+}
+
+.character-actions .char-btn:hover {
+    opacity: 1;
+}
+
+.modal-footer {
+    padding: 15px;
+    border-top: 1px solid #eee;
+    background-color: #f9f9f9;
+    text-align: center;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+}
+
+.storage-warning {
+    margin: 0;
+    font-size: 0.9em;
+    color: #666;
+    line-height: 1.4;
+    margin-top: 15px;
+}
+
+.footer-actions {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    width: 100%;
+}
+
+.footer-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.new-char-btn {
+    margin: 10px;
+    background: black;
+    color: white;
+    font-family: 'Roboto Condensed', sans-serif;
+    font-weight: bold;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.2s;
+    width: 40px;
+    height: 40px;
+    border-radius: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.new-char-btn img {
+    width: 30px;
+    height: auto;
+}
+
+.new-char-btn:hover {
+    background: #333;
+}

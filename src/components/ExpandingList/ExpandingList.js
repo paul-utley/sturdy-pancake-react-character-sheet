@@ -2,6 +2,10 @@ import React from 'react';
 import './ExpandingList.css';
 
 const ExpandingList = ({ items, setItems }) => {
+  const handleRemoveItem = (index) => {
+    const newItems = items.filter((_, i) => i !== index);
+    setItems(newItems);
+  };
 
   const handleItemChange = (index, value) => {
     const newItems = [...items];
@@ -26,6 +30,9 @@ const ExpandingList = ({ items, setItems }) => {
             onChange={(e) => handleItemChange(index, e.target.value)}
             placeholder="New item..."
           />
+          {index < items.length - 1 && (
+            <button onClick={() => handleRemoveItem(index)} className="remove-inventory-item-btn">×</button>
+          )}
         </div>
       ))}
     </div>
