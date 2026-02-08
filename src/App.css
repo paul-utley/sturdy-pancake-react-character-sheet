@@ -47,7 +47,7 @@
   clip-path: polygon(10px 0, calc(100% - 10px) 0, 100% 10px, 100% calc(100% - 10px), calc(100% - 10px) 100%, 10px 100%, 0 calc(100% - 10px), 0 10px);
 }
 
-.action-btn:hover {
+.action-btn {
   background: #333;
 }
 
@@ -251,5 +251,94 @@
   .column:last-child {
     /* The third column takes full width on the next line */
     flex-basis: 100%;
+  }
+}
+
+@media screen and (max-width: 1300px) {
+  .mobile-tabs {
+    display: flex;
+    background: white;
+    position: sticky;
+    top: 0;
+    z-index: 20;
+  }
+  
+  .mobile-tab {
+    flex: 1;
+    padding: 12px 8px;
+    background: none;
+    border: 1px solid #ddd;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 0.9em;
+    font-weight: bold;
+    text-align: center;
+    transition: all 0.2s;
+  }
+  
+  .mobile-tab:not(:last-child) {
+    border-right: none;
+  }
+  
+  .mobile-tab:hover {
+    background: none;
+  }
+  
+  .mobile-tab.active {
+    background: #000;
+    color: #fff;
+    border-color: #000;
+    border-bottom: 4px solid #000;
+  }
+  
+  .mobile-tab-content > div {
+    display: none;
+  }
+  
+  .mobile-tab-content > div.active {
+    display: block;
+    padding: 20px;
+  }
+  
+  .abilities-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 15px;
+    margin-bottom: 15px;
+  }
+  
+  .ability-card {
+    overflow: visible;
+  }
+  
+  .combat-techniques-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 15px;
+    margin-bottom: 15px;
+  }
+  
+  .core-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-auto-rows: auto;
+    gap: 15px;
+    align-items: start;
+  }
+  
+  @media screen and (max-width: 768px) {
+    .core-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  
+  .stat-grid {
+    position: static;
+    border-bottom: none;
+    padding: 0;
+  }
+  
+  .main-content {
+    flex-direction: column;
   }
 }

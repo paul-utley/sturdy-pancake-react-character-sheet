@@ -49,6 +49,6 @@
     color: #999;
 }
 
-.attribute-box:hover .header-control {
+.attribute-box .header-control {
     opacity: 1;
 }

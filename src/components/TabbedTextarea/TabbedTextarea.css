@@ -14,7 +14,7 @@
   cursor: grab;
   color: #aaa;
   font-size: 1.2em;
-  opacity: 0;
+  opacity: 1;
   transition: opacity 0.2s;
   z-index: 2;
   line-height: 1;
@@ -89,7 +89,7 @@
   font-size: 1.4em;
   padding: 0;
   transition: opacity 0.2s;
-  opacity: 0;
+  opacity: 1;
   z-index: 2;
 }
 
