@@ -123,12 +123,14 @@ const CombatTechniqueBox = ({ technique, onChange, onRemove, isCollapsible, isLo
           value={technique.armament}
           onChange={handleArmamentChange}
           options={combatTechniqueCosts.armament.options}
+          isLocked={isLocked}
         />
         <CombatTechniqueAttributeInput
           label="Role"
           value={technique.role}
           onChange={handleRoleChange}
           options={combatTechniqueCosts.role.options}
+          isLocked={isLocked}
         />
       </div>
       <div className="technique-stats-container">
@@ -137,6 +139,7 @@ const CombatTechniqueBox = ({ technique, onChange, onRemove, isCollapsible, isLo
           value={technique.damage}
           onChange={handleDamageChange}
           options={combatTechniqueCosts.damage.options}
+          isLocked={isLocked}
         />
         {(technique.role === 'Melee Combat' || technique.role === 'Versatile') && (
           <CombatTechniqueAttributeInput
@@ -145,6 +148,7 @@ const CombatTechniqueBox = ({ technique, onChange, onRemove, isCollapsible, isLo
             onChange={handleZoneChange}
             options={combatTechniqueCosts.zone.options}
             units={combatTechniqueCosts.zone.units}
+            isLocked={isLocked}
           />
         )}
       </div>
@@ -156,6 +160,7 @@ const CombatTechniqueBox = ({ technique, onChange, onRemove, isCollapsible, isLo
               onChange={handleRangeChange}
               options={combatTechniqueCosts.range.options}
               units={combatTechniqueCosts.range.units}
+              isLocked={isLocked}
             />
         )}
       </div>
@@ -166,7 +171,7 @@ const CombatTechniqueBox = ({ technique, onChange, onRemove, isCollapsible, isLo
           setItems={handleTraitsChange}
         >
           {(trait, onTraitChange, onTraitRemove) => (
-            <DynamicListItem key={trait.id} onRemove={() => onTraitRemove(trait.id)}>
+            <DynamicListItem key={trait.id} onRemove={() => onTraitRemove(trait.id)} isLocked={isLocked}>
               <TabbedTextarea item={trait} onChange={onTraitChange} isLocked={isLocked} />
             </DynamicListItem>
           )}

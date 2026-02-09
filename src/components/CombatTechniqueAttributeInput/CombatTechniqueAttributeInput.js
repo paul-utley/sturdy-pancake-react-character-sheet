@@ -1,7 +1,7 @@
 import React from 'react';
 import './CombatTechniqueAttributeInput.css';
 
-const CombatTechniqueAttributeInput = ({ label, value, onChange, options, units }) => {
+const CombatTechniqueAttributeInput = ({ label, value, onChange, options, units, isLocked }) => {
   const handleChange = (e) => {
     onChange(e.target.value);
   };
@@ -16,7 +16,7 @@ const CombatTechniqueAttributeInput = ({ label, value, onChange, options, units 
         {cost !== null && <span className="attribute-cost-display">{`{${cost} TP}`}</span>}
       </div>
       <div className="attribute-input-container">
-        <select className="attribute-select" value={value} onChange={handleChange}>
+        <select className="attribute-select" value={value} onChange={handleChange} disabled={isLocked}>
           <option value="" disabled>Select {label}</option>
           {options.map(option => (
             <option key={option.key} value={option.key}>

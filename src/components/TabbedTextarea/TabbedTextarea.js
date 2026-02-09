@@ -28,7 +28,7 @@ const TabbedTextarea = ({ item, onChange, onUse, onRemove, isUsed, isLabelEditab
   return (
     <div className="tabbed-textarea">
       {/* only show drag handle if the dragHandleListeners are provided */}
-      {dragHandleListeners && <div className="drag-handle" {...dragHandleListeners}>☰</div>}
+      {!isLocked && dragHandleListeners && <div className="drag-handle" {...dragHandleListeners}>☰</div>}
       <span ref={sizerRef} className="label-sizer">{item.label || 'Label'}</span>
       {isLabelEditable ? (
         <input

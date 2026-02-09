@@ -880,7 +880,7 @@ function App() {
                 const isUsed = inactiveAbilityButtons.includes(ability.id) || !isAffordable;
 
                 return (
-                  <DynamicListItem key={ability.id} onRemove={() => onAbilityRemove(ability.id)}>
+                  <DynamicListItem key={ability.id} onRemove={() => onAbilityRemove(ability.id)} isLocked={isLocked}>
                     <TabbedTextarea 
                       item={ability} 
                       onChange={onAbilityChange} 
@@ -1058,6 +1058,7 @@ function App() {
       </div>
       )}
     </div>
+    
     <ActionButtons onOpenCharactersModal={() => setCharacterModalOpen(true)} />
     <CharacterModal
       isOpen={isCharacterModalOpen}
